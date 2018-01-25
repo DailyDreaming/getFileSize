@@ -9,35 +9,19 @@ except ImportError:
 
 
 def timeit(method):
-
     def timed(*args, **kw):
         ts = time.time()
         result = method(*args, **kw)
         te = time.time()
-
-        print('%r (%r, %r) %2.2f sec' % \
-              (method.__name__, args, kw, te-ts))
+        print('%2.2f sec' % (te - ts)),
         return result
-
     return timed
 
 @timeit
 def getDirSizeRecursively(dirPath):
-    """
-    This method will walk through a directory and return the cumulative filesize in bytes of all
-    the files in the directory and its subdirectories.
-
-    :param dirPath: Path to a directory.
-    :return: cumulative size in bytes of all files in the directory.
-    :rtype: int
-    """
     totalSize = 0
-    # The value from running stat on each linked file is equal. To prevent the same file
-    # from being counted multiple times, we save the inodes of files that have more than one
-    # nlink associated with them.
-
+    total_size = 0
     unixBlockSize = 512
-
     seenInodes = set()
     for dirPath, dirNames, fileNames in os.walk(dirPath):
         folderSize = 0
@@ -46,30 +30,63 @@ def getDirSizeRecursively(dirPath):
             fileStats = os.stat(fp)
             if fileStats.st_nlink > 1:
                 if fileStats.st_ino not in seenInodes:
+                    total_size += int(subprocess.check_output(['du', '--block-size=1', fp]).split()[0].decode('utf-8'))
                     folderSize += fileStats.st_blocks * unixBlockSize
                     seenInodes.add(fileStats.st_ino)
                 else:
                     continue
             else:
+                total_size += int(subprocess.check_output(['du', '--block-size=1', fp]).split()[0].decode('utf-8'))
                 folderSize += fileStats.st_blocks * unixBlockSize
         totalSize += folderSize
     return totalSize
 
 @timeit
-def get_size(start_path = '.'):
+def getDuRecursively(dirPath):
     total_size = 0
-    for dirpath, dirnames, filenames in os.walk(start_path):
+    seenInodes = set()
+    for dirPath, dirNames, fileNames in os.walk(dirPath):
+        folderSize = 0
+        for f in fileNames:
+            fp = os.path.join(dirPath, f)
+            fileStats = os.stat(fp)
+            if fileStats.st_nlink > 1:
+                if fileStats.st_ino not in seenInodes:
+                    total_size += int(subprocess.check_output(['du', '--block-size=1', fp]).split()[0].decode('utf-8'))
+                    seenInodes.add(fileStats.st_ino)
+                else:
+                    continue
+            else:
+                total_size += int(subprocess.check_output(['du', '--block-size=1', fp]).split()[0].decode('utf-8'))
+        total_size += folderSize
+    return total_size
+
+@timeit
+def naive_get_du(path ='.'):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            total_size += int(subprocess.check_output(['du', '--block-size=1', fp]).split()[0].decode('utf-8'))
+    return total_size
+
+@timeit
+def du(path):
+    return subprocess.check_output(['du', '--block-size=1', '-s', path]).split()[0].decode('utf-8')
+
+@timeit
+def naive_get_size(path ='.'):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(path):
         for f in filenames:
             fp = os.path.join(dirpath, f)
             total_size += os.path.getsize(fp)
     return total_size
 
-@timeit
-def du(path):
-    return subprocess.check_output(['du','-sb', path]).split()[0].decode('utf-8')
-
 if __name__ == '__main__':
-    dirPath = '/home/lifeisaboutfishtacos/Desktop/build_toil'
-    print(get_size(dirPath))
-    print(getDirSizeRecursively(dirPath))
-    print(du(dirPath))
+    dirPath = '/home/lifeisaboutfishtacos/Desktop/build_toil/betterJobDebugging/push/toil'
+    print('  getDirSizeRecursively:  ' + str(getDirSizeRecursively(dirPath)))
+    print('  getDuRecursively:       ' + str(getDuRecursively(dirPath)))
+    print('  naive_get_du:           ' + str(int(naive_get_du(dirPath))))
+    print('  du:                     ' + str(int(du(dirPath))))
+    print('  naive_get_size:         ' + str(naive_get_size(dirPath)))
