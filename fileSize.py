@@ -27,7 +27,7 @@ def getDirSizeRecursively(dirPath):
         folderSize = 0
         for f in fileNames:
             fp = os.path.join(dirPath, f)
-            fileStats = os.stat(fp)
+            fileStats = os.lstat(fp)
             if fileStats.st_nlink > 1:
                 if fileStats.st_ino not in seenInodes:
                     total_size += int(subprocess.check_output(['du', '--block-size=1', fp]).split()[0].decode('utf-8'))
@@ -49,7 +49,7 @@ def getDuRecursively(dirPath):
         folderSize = 0
         for f in fileNames:
             fp = os.path.join(dirPath, f)
-            fileStats = os.stat(fp)
+            fileStats = os.lstat(fp)
             if fileStats.st_nlink > 1:
                 if fileStats.st_ino not in seenInodes:
                     total_size += int(subprocess.check_output(['du', '--block-size=1', fp]).split()[0].decode('utf-8'))
@@ -84,7 +84,7 @@ def naive_get_size(path ='.'):
     return total_size
 
 if __name__ == '__main__':
-    dirPath = '/home/lifeisaboutfishtacos/Desktop/build_toil/betterJobDebugging/push/toil'
+    dirPath = '/home/lifeisaboutfishtacos'
     print('  getDirSizeRecursively:  ' + str(getDirSizeRecursively(dirPath)))
     print('  getDuRecursively:       ' + str(getDuRecursively(dirPath)))
     print('  naive_get_du:           ' + str(int(naive_get_du(dirPath))))
