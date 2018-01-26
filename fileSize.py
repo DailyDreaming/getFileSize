@@ -21,7 +21,6 @@ def timeit(method):
 @timeit
 def getDirSizeRecursively(dirPath):
     totalSize = 0
-    total_size = 0
     unixBlockSize = 512
     seenInodes = set()
     for dirPath, dirNames, fileNames in os.walk(dirPath):
@@ -31,13 +30,11 @@ def getDirSizeRecursively(dirPath):
             fileStats = os.lstat(fp)
             if fileStats.st_nlink > 1:
                 if fileStats.st_ino not in seenInodes:
-                    total_size += int(subprocess.check_output(['du', '--block-size=1', fp]).split()[0].decode('utf-8'))
                     folderSize += fileStats.st_blocks * unixBlockSize
                     seenInodes.add(fileStats.st_ino)
                 else:
                     continue
             else:
-                total_size += int(subprocess.check_output(['du', '--block-size=1', fp]).split()[0].decode('utf-8'))
                 folderSize += fileStats.st_blocks * unixBlockSize
         totalSize += folderSize
     return totalSize
