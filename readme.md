@@ -32,7 +32,7 @@ dirPath = '/home/lifeisaboutfishtacos/Desktop'
 157.61 sec   getDirSizeRecursively:  76810080256
 147.61 sec   getDuRecursively:       76743999488
 145.80 sec   naive_get_du:           76743999488
-**breaks b/c of permissions**
+-----------breaks b/c of permissions------------
 1.52 sec     naive_get_size:         75365254310
 
 with SUDO
