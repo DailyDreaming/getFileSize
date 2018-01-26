@@ -43,6 +43,10 @@ dirPath = '/home/lifeisaboutfishtacos/Desktop'
 0.59 sec     du:                     76906373120
 1.58 sec     naive_get_size:         75443958670
 
+without SUDO
+dirPath = '/home/lifeisaboutfishtacos'
+1.66 sec     du:                     262033887232
+
 with SUDO
 dirPath = '/home/lifeisaboutfishtacos'
 558.51 sec   getDirSizeRecursively:  261871767552
