@@ -32,7 +32,7 @@ dirPath = '/home/lifeisaboutfishtacos/Desktop'
 157.61 sec   getDirSizeRecursively:  76810080256
 147.61 sec   getDuRecursively:       76743999488
 145.80 sec   naive_get_du:           76743999488
------------breaks b/c of permissions------------
+-----------broke b/c of permissions-------------
 1.52 sec     naive_get_size:         75365254310
 
 with SUDO
@@ -42,4 +42,12 @@ dirPath = '/home/lifeisaboutfishtacos/Desktop'
 143.51 sec   naive_get_du:           76844351488
 0.59 sec     du:                     76906373120
 1.58 sec     naive_get_size:         75443958670
+
+with SUDO
+dirPath = '/home/lifeisaboutfishtacos'
+558.51 sec   getDirSizeRecursively:  261871767552
+474.46 sec   getDuRecursively:       261873651712
+454.54 sec   naive_get_du:           261873684480
+1.90 sec     du:                     262115340288
+--broke b/c of attempt to follow broken symlink--
 </pre>
