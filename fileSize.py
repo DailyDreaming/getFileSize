@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+import shlex
 
 try:
     from os import scandir, walk
@@ -72,7 +73,9 @@ def naive_get_du(path ='.'):
 
 @timeit
 def du(path):
-    return subprocess.check_output(['du', '--block-size=1', '-s', path]).split()[0].decode('utf-8')
+    p = subprocess.Popen(shlex.split('du --block-size=1 -s ' + path), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = p.communicate()
+    return stdout.split()[0].decode('utf-8')
 
 @timeit
 def naive_get_size(path ='.'):
@@ -84,7 +87,7 @@ def naive_get_size(path ='.'):
     return total_size
 
 if __name__ == '__main__':
-    dirPath = '/home/lifeisaboutfishtacos'
+    dirPath = '/home/lifeisaboutfishtacos/Desktop'
     print('  getDirSizeRecursively:  ' + str(getDirSizeRecursively(dirPath)))
     print('  getDuRecursively:       ' + str(getDuRecursively(dirPath)))
     print('  naive_get_du:           ' + str(int(naive_get_du(dirPath))))
