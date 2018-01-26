@@ -1,4 +1,5 @@
 dirPath = '/home/lifeisaboutfishtacos/Desktop/build_toil/betterJobDebugging/push/toil'
+
 0.31 sec   getDirSizeRecursively:  28639232
 0.31 sec   getDuRecursively:       28639232
 0.31 sec   naive_get_du:           28639232
